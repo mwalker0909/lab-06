@@ -21,9 +21,30 @@ app.get('/', (request,response) => {
 });
 
 app.get('/location', (request,response) => {
+  try {
+    const query = request.query.data;
+    response.send(searchLatLong(query)); 
+    // console.log(response);
+  }
+  catch(error) {
+      console.error(error);
+  }
   //TODO envoke function that converts search query to lat/long. 
 
 });
+
+// app.get('/location', (request,response) => {
+//   try {
+//     const geoData = require('./data/geo.json');
+//     const city = request.query.data;
+//     const locationData = new Location(city,geoData);
+//     response.send(locationData);
+//   }
+//   catch(error) {
+//     errorHandler('So sorry, something went wrong.', request, response);
+//   }
+// });
+
 
 
 //entries points
@@ -34,7 +55,7 @@ app.listen(PORT, () => console.log(`App is listening on ${PORT}`));
 // models
 
 //******LOCATION CONSTRUCTOR FUNCTION HERE*******. 
-function Location(query, data) {
+function Location(query, geoData) {
   this.search_query = query;
   this.formatted_query = geoData.results[0].formatted_address;
   this.latitude = geoData.results[0].geometry.location.lat;
@@ -46,6 +67,13 @@ function Location(query, data) {
 
 //helpers
 
+function searchLatLong(location) {
+  const geoData = require('./data/geo.json');
+  const locationData = new Location(location,geoData);
+  console.log(locationData.latitude, locationData.longitude);
+  return locationData;
+}
+  
 
 
 //****** LOCATION HELPER FUNCTION HERE.  ********/
