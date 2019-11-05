@@ -54,7 +54,12 @@ app.listen(PORT, () => console.log(`App is listening on ${PORT}`));
 // handlers
 // models
 
-//******LOCATION CONSTRUCTOR FUNCTION HERE*******. 
+
+
+// ----------------------------------------------
+//******LOCATION CONSTRUCTOR FUNCTION HERE*******
+//-----------------------------------------------
+
 function Location(query, geoData) {
   this.search_query = query;
   this.formatted_query = geoData.results[0].formatted_address;
@@ -62,6 +67,12 @@ function Location(query, geoData) {
   this.longitude = geoData.results[0].geometry.location.lng;
 }
 
+function Weather(query, weatherData) {
+  this.search_query = query;
+  this.latitude = query.latitude;
+  this.longitude = query.longitude;
+  this.forcast = weatherData.daily.data;
+}
 
 
 
