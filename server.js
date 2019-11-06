@@ -4,15 +4,16 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
-
+const superagent = require('superagent')
 
 // enviremont variables
 const PORT = process.env.PORT;
 
 
-// set up
+// Application setup
 const app = express();
 app.use(cors());
+
 
 
 //routes
@@ -24,11 +25,24 @@ app.get('/location', (request,response) => {
   try {
     const query = request.query.data;
     response.send(searchLatLong(query)); 
-    // console.log(response);
+    
   }
   catch(error) {
       console.error(error);
   }
+
+  //weather route
+  app.get('/weather', (request, response) => {
+    try {
+      const weatherData = request.query.data;
+      response.send(weatherData(query));
+    }
+    catch(error) {
+      console.error(error);
+      let message = errorMessage();
+      response.status(message.status).send(message.responseText);
+    }
+  });
   //TODO envoke function that converts search query to lat/long. 
 
 });
@@ -52,6 +66,64 @@ app.listen(PORT, () => console.log(`App is listening on ${PORT}`));
 
 
 // handlers
+
+function handleLocation(request, response) {
+
+
+
+
+
+
+const = url // long url that represents google api
+
+
+
+superagent.get(url)
+  .then( data => {
+    const geoData = data.body
+    const location = new Location(request.query.data, geoData);
+    response.send(location);
+  })
+  .catch( error => {
+    console.error(error);
+    response.status(500).send('Status: 500. Sorry, there is something not quite right');
+  });
+}
+
+// CHECK OUT VIDEO  FOR THIS
+function handleWeather(request, response) {
+  try {
+    const darkskyData = require('./data/darksky.json');
+    const weatherSummaries = [];
+    darkskyData.daily.data.forEach( day => {
+      weatherSummaries.push(new Weather(day));
+    });
+
+  }
+}
+  catch {
+    
+    errorHandler('so sorry, that is wrong');
+  }
+
+  const = `https://api.darksky.net/forecast/${WEATHER_API_KEY}/${request.query.data.latitude},${request.query.data.longitude}`
+  superagent.get(url)
+  .then( data => {
+    const weatherSummaries = data.body.daily.data.map(day => {
+      return new Weather(day);
+    });
+    response.status(200).json(weatherSummaries);
+  })
+  .catch( () => {
+      errorHandler('So sorry', request, response);
+  });
+
+
+
+
+
+
+
 // models
 
 
@@ -68,10 +140,9 @@ function Location(query, geoData) {
 }
 
 function Weather(query, weatherData) {
-  this.search_query = query;
-  this.latitude = query.latitude;
-  this.longitude = query.longitude;
-  this.forcast = weatherData.daily.data;
+  this.forcast = day.summery
+  this.time = new Date(day.time * 1000).toString().slice(0,15);
+
 }
 
 
@@ -84,7 +155,13 @@ function searchLatLong(location) {
   console.log(locationData.latitude, locationData.longitude);
   return locationData;
 }
-  
+
+function weather(location) {
+  const geoData = require('./data/geo.json');
+  const locationData = new Location(location,geoData);
+  console.log(locationData.latitude, locationData.longitude);
+  return locationData;
+}
 
 
 //****** LOCATION HELPER FUNCTION HERE.  ********/
@@ -94,3 +171,8 @@ function searchLatLong(location) {
 // new a location object using the data. 
 // catch any errors. 
 // 
+
+
+
+
+
